@@ -127,9 +127,8 @@ def search_annotations():
         if not auth.verify_request(request):
             return _failed_auth_response()
 
-        kwargs['_user_id'] = uid
-
     results = Annotation.search(**kwargs)
+    results = filter(lambda a: authz.authorize(a, 'read', uid), results)
     total = Annotation.count(**kwargs)
     return jsonify({
         'total': total,
